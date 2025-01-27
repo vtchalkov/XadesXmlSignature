@@ -31,9 +31,9 @@ namespace FirmaXadesNet.Crypto
     {
         #region Private variables
 
-        private string _name;
-        private string _uri;
-        private string _oid;
+        private readonly string _name;
+        private readonly string _uri;
+        private readonly string _oid;
 
         #endregion
 

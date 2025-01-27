@@ -30,8 +30,8 @@ namespace FirmaXadesNet.Signature.Parameters
     {
         #region Private variables
 
-        private List<X509Certificate> _certifiedRoles;
-        private List<string> _claimedRoles;
+        private readonly List<X509Certificate> _certifiedRoles;
+        private readonly List<string> _claimedRoles;
 
         #endregion
 

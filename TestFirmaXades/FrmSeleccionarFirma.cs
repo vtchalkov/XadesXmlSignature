@@ -28,7 +28,7 @@ namespace TestFirmaXades
 {
     public partial class FrmSeleccionarFirma : Form
     {
-        private SignatureDocument[] _firmas = null;
+        private readonly SignatureDocument[] _firmas = null;
 
         public SignatureDocument FirmaSeleccionada
         {

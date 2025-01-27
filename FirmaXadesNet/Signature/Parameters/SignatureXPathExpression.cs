@@ -33,7 +33,7 @@ namespace FirmaXadesNet.Signature.Parameters
     {
         #region Private variables
 
-        private Dictionary<string, string> _namespaces;
+        private readonly Dictionary<string, string> _namespaces;
 
         #endregion
 

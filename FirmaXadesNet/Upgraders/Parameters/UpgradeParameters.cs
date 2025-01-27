@@ -33,17 +33,17 @@ namespace FirmaXadesNet.Upgraders.Parameters
     {
         #region Private variables
 
-        private List<OcspServer> _ocspServers;
+        private readonly List<OcspServer> _ocspServers;
 
-        private List<X509Crl> _crls;
+        private readonly List<X509Crl> _crls;
 
         private DigestMethod _digestMethod;
 
         private TimeStampClient _timeStampClient;
 
-        private X509CrlParser _crlParser;
+        private readonly X509CrlParser _crlParser;
 
-        private DigestMethod _defaultDigestMethod = DigestMethod.SHA1;
+        private readonly DigestMethod _defaultDigestMethod = DigestMethod.SHA1;
 
         private bool _getOcspUrlFromCertificate;
 

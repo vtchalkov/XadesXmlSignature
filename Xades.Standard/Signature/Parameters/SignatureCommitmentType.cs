@@ -33,7 +33,7 @@ namespace FirmaXadesNet.Signature.Parameters
     {
         #region Private variables
 
-        private string _uri;
+        private readonly string _uri;
 
         #endregion
 

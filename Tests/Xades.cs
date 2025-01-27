@@ -34,10 +34,10 @@ namespace Tests
 {
     public class Xades
     {
-        X509Certificate2 _signCertificate;
-        AsymmetricKeyParameter _caPrivKey;
-        X509Certificate2 _rootCert;
-        string rootDirectory;
+        readonly X509Certificate2 _signCertificate;
+        readonly AsymmetricKeyParameter _caPrivKey;
+        readonly X509Certificate2 _rootCert;
+        readonly string rootDirectory;
         public Xades()
         {
             _caPrivKey = GenerateCACertificate("CN=root ca", out _rootCert);

@@ -33,7 +33,7 @@ namespace FirmaXadesNet.Crypto
         #region Private variables
 
         private bool _disposeCryptoProvider;
-        private X509Certificate2 _signingCertificate;
+        private readonly X509Certificate2 _signingCertificate;
         private AsymmetricAlgorithm _signingKey;
 
         #endregion
