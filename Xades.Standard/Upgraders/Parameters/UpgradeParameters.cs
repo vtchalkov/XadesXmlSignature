@@ -47,6 +47,8 @@ namespace FirmaXadesNet.Upgraders.Parameters
 
         private bool _getOcspUrlFromCertificate;
 
+        private bool _refsOnlyTimeStamp;
+
         #endregion
 
         #region Public properties
@@ -103,6 +105,25 @@ namespace FirmaXadesNet.Upgraders.Parameters
             set
             {
                 _getOcspUrlFromCertificate = value;
+            }
+        }
+
+        /// <summary>
+        /// When upgrading to XAdES-X, use RefsOnlyTimeStamp instead of SigAndRefsTimeStamp.
+        /// RefsOnlyTimeStamp covers only the certificate and revocation references,
+        /// while SigAndRefsTimeStamp also covers the signature value.
+        /// Default is false (use SigAndRefsTimeStamp).
+        /// </summary>
+        public bool RefsOnlyTimeStamp
+        {
+            get
+            {
+                return _refsOnlyTimeStamp;
+            }
+
+            set
+            {
+                _refsOnlyTimeStamp = value;
             }
         }
 

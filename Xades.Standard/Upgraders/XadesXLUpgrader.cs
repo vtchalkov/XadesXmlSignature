@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // XadesXLUpgrader.cs
 //
 // FirmaXadesNet - Librería para la generación de firmas XADES
@@ -15,10 +15,10 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with this program.  If not, see http://www.gnu.org/licenses/. 
+// along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 // E-Mail: informatica@gemuc.es
-// 
+//
 // --------------------------------------------------------------------------------------------------------------------
 
 using FirmaXadesNet.Clients;
@@ -45,6 +45,11 @@ using System.Xml;
 
 namespace FirmaXadesNet.Upgraders
 {
+    /// <summary>
+    /// Upgrades a signature to XAdES-XL by adding CompleteCertificateRefs,
+    /// CompleteRevocationRefs (via XAdES-C), CertificateValues, RevocationValues,
+    /// and SigAndRefsTimeStamp (via XAdES-X).
+    /// </summary>
     class XadesXLUpgrader : IXadesUpgrader
     {
 

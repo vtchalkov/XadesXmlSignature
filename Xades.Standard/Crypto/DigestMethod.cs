@@ -103,6 +103,26 @@ namespace FirmaXadesNet.Crypto
             }
         }
 
+        public static DigestMethod GetByURI(string uri)
+        {
+            if (uri == SHA1.URI)
+            {
+                return SHA1;
+            }
+            else if (uri == SHA256.URI)
+            {
+                return SHA256;
+            }
+            else if (uri == SHA512.URI)
+            {
+                return SHA512;
+            }
+            else
+            {
+                throw new Exception("Unsupported digest method URI");
+            }
+        }
+
         public HashAlgorithm GetHashAlgorithm()
         {
             if (_name == "SHA1")

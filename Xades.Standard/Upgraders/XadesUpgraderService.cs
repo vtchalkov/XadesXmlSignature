@@ -34,7 +34,10 @@ namespace FirmaXadesNet.Upgraders
     public enum SignatureFormat
     {
         XAdES_T,
-        XAdES_XL
+        XAdES_C,
+        XAdES_X,
+        XAdES_XL,
+        XAdES_A
     }
 
     public class XadesUpgraderService
@@ -43,27 +46,80 @@ namespace FirmaXadesNet.Upgraders
 
         public void Upgrade(SignatureDocument sigDocument, SignatureFormat toFormat, UpgradeParameters parameters)
         {
-            XadesTUpgrader xadesTUpgrader = null;
-            XadesXLUpgrader xadesXLUpgrader = null;
-
             SignatureDocument.CheckSignatureDocument(sigDocument);
 
-            if (toFormat == SignatureFormat.XAdES_T)
+            switch (toFormat)
             {
-                xadesTUpgrader = new XadesTUpgrader();
-                xadesTUpgrader.Upgrade(sigDocument, parameters);
-            }
-            else
-            {
-                if (sigDocument.XadesSignature.UnsignedProperties.UnsignedSignatureProperties.SignatureTimeStampCollection.Count == 0)
-                {
-                    xadesTUpgrader = new XadesTUpgrader();
-                    xadesTUpgrader.Upgrade(sigDocument, parameters);
-                }
+                case SignatureFormat.XAdES_T:
+                    EnsureT(sigDocument, parameters);
+                    break;
 
-                xadesXLUpgrader = new XadesXLUpgrader();
-                xadesXLUpgrader.Upgrade(sigDocument, parameters);
+                case SignatureFormat.XAdES_C:
+                    EnsureT(sigDocument, parameters);
+                    EnsureC(sigDocument, parameters);
+                    break;
+
+                case SignatureFormat.XAdES_X:
+                    EnsureT(sigDocument, parameters);
+                    EnsureC(sigDocument, parameters);
+                    EnsureX(sigDocument, parameters);
+                    break;
+
+                case SignatureFormat.XAdES_XL:
+                    EnsureT(sigDocument, parameters);
+                    // XL upgrader handles C + values + X timestamp in one pass
+                    // for backward compatibility and atomicity
+                    new XadesXLUpgrader().Upgrade(sigDocument, parameters);
+                    break;
+
+                case SignatureFormat.XAdES_A:
+                    EnsureT(sigDocument, parameters);
+                    // Use XL upgrader for the full C + values + X timestamp
+                    if (!HasXLProperties(sigDocument))
+                    {
+                        new XadesXLUpgrader().Upgrade(sigDocument, parameters);
+                    }
+                    new XadesAUpgrader().Upgrade(sigDocument, parameters);
+                    break;
             }
+        }
+
+        #endregion
+
+        #region Private methods
+
+        private void EnsureT(SignatureDocument sigDocument, UpgradeParameters parameters)
+        {
+            if (sigDocument.XadesSignature.UnsignedProperties.UnsignedSignatureProperties.SignatureTimeStampCollection.Count == 0)
+            {
+                new XadesTUpgrader().Upgrade(sigDocument, parameters);
+            }
+        }
+
+        private void EnsureC(SignatureDocument sigDocument, UpgradeParameters parameters)
+        {
+            var unsignedProps = sigDocument.XadesSignature.UnsignedProperties.UnsignedSignatureProperties;
+            if (unsignedProps.CompleteCertificateRefs == null || !unsignedProps.CompleteCertificateRefs.HasChanged())
+            {
+                new XadesCUpgrader().Upgrade(sigDocument, parameters);
+            }
+        }
+
+        private void EnsureX(SignatureDocument sigDocument, UpgradeParameters parameters)
+        {
+            var unsignedProps = sigDocument.XadesSignature.UnsignedProperties.UnsignedSignatureProperties;
+            if (unsignedProps.SigAndRefsTimeStampCollection.Count == 0 && unsignedProps.RefsOnlyTimeStampCollection.Count == 0)
+            {
+                new XadesXUpgrader().Upgrade(sigDocument, parameters);
+            }
+        }
+
+        private bool HasXLProperties(SignatureDocument sigDocument)
+        {
+            var unsignedProps = sigDocument.XadesSignature.UnsignedProperties.UnsignedSignatureProperties;
+            return unsignedProps.CertificateValues != null && unsignedProps.CertificateValues.HasChanged()
+                && unsignedProps.RevocationValues != null && unsignedProps.RevocationValues.HasChanged()
+                && unsignedProps.CompleteCertificateRefs != null && unsignedProps.CompleteCertificateRefs.HasChanged();
         }
 
         #endregion
