@@ -1319,7 +1319,7 @@ namespace Microsoft.Xades
         /// <returns>If the function returns true the check was OK</returns>
         public virtual bool CheckCertificateValuesMatchCertificateRefs()
         {
-            SHA1Managed sha1Managed;
+            SHA1 sha1Managed;
             UnsignedSignatureProperties unsignedSignatureProperties;
             ArrayList certDigests;
             byte[] certDigest;
@@ -1340,7 +1340,7 @@ namespace Microsoft.Xades
                 certDigests.Sort();
                 foreach (EncapsulatedX509Certificate encapsulatedX509Certificate in unsignedSignatureProperties.CertificateValues.EncapsulatedX509CertificateCollection)
                 {
-                    sha1Managed = new SHA1Managed();
+                    sha1Managed = SHA1.Create();
                     certDigest = sha1Managed.ComputeHash(encapsulatedX509Certificate.PkiData);
                     index = certDigests.BinarySearch(Convert.ToBase64String(certDigest));
                     if (index >= 0)
@@ -1364,7 +1364,7 @@ namespace Microsoft.Xades
         /// <returns>If the function returns true the check was OK</returns>
         public virtual bool CheckRevocationValuesMatchRevocationRefs()
         {
-            SHA1Managed sha1Managed;
+            SHA1 sha1Managed;
             UnsignedSignatureProperties unsignedSignatureProperties;
             ArrayList crlDigests;
             byte[] crlDigest;
@@ -1385,7 +1385,7 @@ namespace Microsoft.Xades
                 crlDigests.Sort();
                 foreach (CRLValue crlValue in unsignedSignatureProperties.RevocationValues.CRLValues.CRLValueCollection)
                 {
-                    sha1Managed = new SHA1Managed();
+                    sha1Managed = SHA1.Create();
                     crlDigest = sha1Managed.ComputeHash(crlValue.PkiData);
                     index = crlDigests.BinarySearch(Convert.ToBase64String(crlDigest));
                     if (index >= 0)

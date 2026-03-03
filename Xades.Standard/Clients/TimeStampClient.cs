@@ -27,6 +27,7 @@ using Org.BouncyCastle.Tsp;
 using System;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 
 namespace FirmaXadesNet.Clients
@@ -76,31 +77,29 @@ namespace FirmaXadesNet.Clients
             TimeStampRequest tsr = tsrq.Generate(digestMethod.Oid, hash, nonce);
             byte[] data = tsr.GetEncoded();
 
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(_url);
-            req.Method = "POST";
-            req.ContentType = "application/timestamp-query";
-            req.ContentLength = data.Length;
+            using var httpClient = new HttpClient();
 
             if (!string.IsNullOrEmpty(_user) && !string.IsNullOrEmpty(_password))
             {
                 string auth = string.Format("{0}:{1}", _user, _password);
-                req.Headers["Authorization"] = "Basic " + Convert.ToBase64String(Encoding.Default.GetBytes(auth), Base64FormattingOptions.None);
+                httpClient.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Basic",
+                        Convert.ToBase64String(Encoding.Default.GetBytes(auth), Base64FormattingOptions.None));
             }
 
-            Stream reqStream = req.GetRequestStream();
-            reqStream.Write(data, 0, data.Length);
-            reqStream.Close();
+            var content = new ByteArrayContent(data);
+            content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/timestamp-query");
 
-            HttpWebResponse res = (HttpWebResponse)req.GetResponse();
-            if (res.StatusCode != HttpStatusCode.OK)
+            var res = httpClient.PostAsync(_url, content).GetAwaiter().GetResult();
+            if (!res.IsSuccessStatusCode)
             {
                 throw new Exception("The server returned an invalid response");
             }
-            else
+
+            byte[] responseBytes = res.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
+            using (var resStream = new MemoryStream(responseBytes))
             {
-                Stream resStream = new BufferedStream(res.GetResponseStream());
                 TimeStampResponse tsRes = new TimeStampResponse(resStream);
-                resStream.Close();
 
                 tsRes.Validate(tsr);
 

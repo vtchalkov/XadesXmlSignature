@@ -36,6 +36,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
@@ -183,27 +184,16 @@ namespace FirmaXadesNet.Clients
         /// <returns></returns>
         private byte[] PostData(string url, byte[] data, string contentType, string accept)
         {
-            byte[] resp;
+            using var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.ParseAdd(accept);
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "POST";
-            request.ContentType = contentType;
-            request.ContentLength = data.Length;
-            request.Accept = accept;
+            var content = new ByteArrayContent(data);
+            content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
 
-            Stream stream = request.GetRequestStream();
-            stream.Write(data, 0, data.Length);
-            stream.Close();
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            Stream respStream = response.GetResponseStream();
-            using (MemoryStream ms = new MemoryStream())
-            {
-                respStream.CopyTo(ms);
-                resp = ms.ToArray();
-                respStream.Close();
-            }
+            var response = httpClient.PostAsync(url, content).GetAwaiter().GetResult();
+            response.EnsureSuccessStatusCode();
 
-            return resp;
+            return response.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
         }
 
 
