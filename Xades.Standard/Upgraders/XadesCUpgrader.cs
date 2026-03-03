@@ -304,13 +304,13 @@ namespace FirmaXadesNet.Upgraders
                 byte[] resp = ocsp.QueryBinary(clientCert, issuerCert, ocspServer.Url, useNonce, ocspServer.RequestorName,
                     ocspServer.SignCertificate);
 
-                CertificateStatus status = ocsp.ProcessOcspResponse(resp, useNonce);
+                FirmaXadesNet.Clients.CertificateStatus status = ocsp.ProcessOcspResponse(resp, useNonce);
 
-                if (status == CertificateStatus.Revoked)
+                if (status == FirmaXadesNet.Clients.CertificateStatus.Revoked)
                 {
                     throw new Exception("Certificate revoked");
                 }
-                else if (status == CertificateStatus.Good)
+                else if (status == FirmaXadesNet.Clients.CertificateStatus.Good)
                 {
                     Org.BouncyCastle.Ocsp.OcspResp r = new OcspResp(resp);
                     byte[] rEncoded = r.GetEncoded();

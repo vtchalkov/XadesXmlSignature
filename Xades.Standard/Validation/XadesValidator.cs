@@ -22,6 +22,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
+using System;
 using FirmaXadesNet.Signature;
 using FirmaXadesNet.Utils;
 using Microsoft.Xades;
@@ -63,10 +64,10 @@ namespace FirmaXadesNet.Validation
                 // Check the traces of references and signature
                 sigDocument.XadesSignature.CheckXmldsigSignature();
             }
-            catch
+            catch (Exception ex)
             {
                 result.IsValid = false;
-                result.Message = "Signature verification is unsuccessful!";
+                result.Message = "Signature verification is unsuccessful: " + (ex.InnerException?.Message ?? ex.Message);
 
                 return result;
             }

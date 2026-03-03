@@ -39,8 +39,8 @@ namespace Microsoft.Xades
         /// </summary>
         public RSAPKCS1SHA512SignatureDescription()
         {
-            KeyAlgorithm = typeof(RSACryptoServiceProvider).FullName;
-            DigestAlgorithm = typeof(SHA512Managed).FullName;
+            KeyAlgorithm = typeof(RSA).FullName;
+            DigestAlgorithm = typeof(SHA512).FullName;
             FormatterAlgorithm = typeof(RSAPKCS1SignatureFormatter).FullName;
             DeformatterAlgorithm = typeof(RSAPKCS1SignatureDeformatter).FullName;
         }

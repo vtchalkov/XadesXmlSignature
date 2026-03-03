@@ -111,6 +111,16 @@ namespace FirmaXadesNet
 
             signatureDocument.UpdateDocument();
 
+            // Reload the XadesSignedXml from the final document to ensure
+            // internal state is consistent for subsequent validation.
+            // After ComputeSignature + UpdateDocument, the internal _containingDocument
+            // and cachedXadesObjectDocument may be stale on .NET 8.
+            var reloaded = Load(signatureDocument.Document);
+            if (reloaded.Length > 0)
+            {
+                signatureDocument.XadesSignature = reloaded[reloaded.Length - 1].XadesSignature;
+            }
+
             return signatureDocument;
         }
 
@@ -182,6 +192,13 @@ namespace FirmaXadesNet
             ComputeSignature(coSignatureDocument);
 
             coSignatureDocument.UpdateDocument();
+
+            // Reload for consistent internal state
+            var reloaded = Load(coSignatureDocument.Document);
+            if (reloaded.Length > 0)
+            {
+                coSignatureDocument.XadesSignature = reloaded[reloaded.Length - 1].XadesSignature;
+            }
 
             return coSignatureDocument;
         }

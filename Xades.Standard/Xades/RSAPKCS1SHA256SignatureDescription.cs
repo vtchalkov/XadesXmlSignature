@@ -102,8 +102,8 @@ namespace Microsoft.Xades
         /// </summary>
         public RSAPKCS1SHA256SignatureDescription()
         {
-            KeyAlgorithm = typeof(RSACryptoServiceProvider).FullName;
-            DigestAlgorithm = typeof(SHA256Managed).FullName;   // Note - SHA256CryptoServiceProvider is not registered with CryptoConfig
+            KeyAlgorithm = typeof(RSA).FullName;
+            DigestAlgorithm = typeof(SHA256).FullName;
             FormatterAlgorithm = typeof(RSAPKCS1SignatureFormatter).FullName;
             DeformatterAlgorithm = typeof(RSAPKCS1SignatureDeformatter).FullName;
         }
